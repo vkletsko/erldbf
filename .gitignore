@@ -1,0 +1,12 @@
+/deps
+.eunit
+.DS_Store
+log
+logs/
+ebin/
+.idea
+test/*.beam
+*.iml
+*.dump
+.rebar/
+*~

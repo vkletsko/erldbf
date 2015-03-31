@@ -1,0 +1,16 @@
+{application, erldbf,
+ [
+  {description, "Small Dbf Parser"},
+  {vsn, "1"},
+  {registered, []},
+  {applications, [
+                 	kernel,
+		    		      stdlib,
+        			    sasl,
+        			    asn1,
+        			    syntax_tools,
+        			    compiler
+                 ]},
+  {mod, { erldbf_app, []}},
+  {env, []}
+ ]}.
