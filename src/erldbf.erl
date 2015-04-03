@@ -44,6 +44,7 @@ parse_bin(BinContent) when is_binary(BinContent) ->
 parse(FileName) when is_list(FileName) ->
   case file:read_file(FileName) of
     {ok, Bin} ->
+      io:format("Size BIn Content: ~p~n", [byte_size(Bin)]),
       {ok, FileStructure} = decode_header(Bin),
       parse_rows(FileStructure);
     Error -> Error
@@ -65,17 +66,18 @@ decode_header(
     N:4/little-unit:8,   %% 8 bytes
     FieldsStripe:2/little-unit:8, RecordStripe:2/little-unit:8,   %% 4 bytes
     _Z:20/unit:8, Rest/binary>>) ->
-  {FieldDescriptor, Rows} = split_binary(Rest, FieldsStripe - 33),
-  <<_Oy:350/binary, _/binary>> = Rows,
-  Fields = field_descriptor(FieldDescriptor, []),
-  {ok, #file_struct{
-    vsn = Vsn,
-    date = {Yy, Mm, Dd},
-    record_stripe = RecordStripe,
-    count_rows = N,
-    fields = lists:reverse(Fields),
-    fields_len = length(Fields),
-    buffer = skip_rows(Rows)}}.
+    {FieldDescriptor, Rows} = split_binary(Rest, FieldsStripe - 33),
+    Fields = field_descriptor(FieldDescriptor, []),
+    {ok, #file_struct{
+        vsn = Vsn,
+        date = {Yy, Mm, Dd},
+        record_stripe = RecordStripe,
+        count_rows = N,
+        fields = lists:reverse(Fields),
+        fields_len = length(Fields),
+        buffer = skip_rows(Rows)}
+    }.
+
 
 -spec skip_rows(binary()) -> binary().
 skip_rows(<<" ", Rest/binary>>) ->
